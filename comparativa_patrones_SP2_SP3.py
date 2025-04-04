@@ -182,6 +182,8 @@ resultados_SP3_abril_265.sort()
 %matplotlib
 fig, (ax1,ax2) = plt.subplots(nrows=1,ncols=2,figsize=(10,5), constrained_layout=True,sharey=True)
 
+
+#elijo uno de los ciclos para que se vea mejor
 for i in ciclos_SP2_marzo_108:
     _,_,_,H,M,_=lector_ciclos(i)
     ax1.plot(H,M)
