@@ -4,10 +4,11 @@ from glob import glob
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+%matplotlib
 #%% Funciones
 def plot_ciclos_promedio(directorio):
     # Buscar recursivamente todos los archivos que coincidan con el patrón
-    archivos = glob.glob(os.path.join(directorio, '**', '*ciclo_promedio*.txt'), recursive=True)
+    archivos = glob(os.path.join(directorio, '**', '*ciclo_promedio*.txt'), recursive=True)
     
     if not archivos:
         print(f"No se encontraron archivos '*ciclo_promedio.txt' en {directorio} o sus subdirectorios")
@@ -168,36 +169,142 @@ ciclos_SP3_abril_108.sort()
 resultados_SP3_abril_108=glob(os.path.join('data_250403','108_SP3','**', '*resultados*'),recursive=True)
 resultados_SP3_abril_108.sort()
 
-ciclos_SP3_abril_108=glob(os.path.join('data_250403','108_SP3','**', '*ciclo_promedio*'),recursive=True)
-ciclos_SP3_abril_108.sort()
-resultados_SP3_abril_108=glob(os.path.join('data_250403','108_SP3','**', '*resultados*'),recursive=True)
-resultados_SP3_abril_108.sort()
-
 ciclos_SP3_abril_265=glob(os.path.join('data_250403','265_SP3','**', '*ciclo_promedio*'),recursive=True)
 ciclos_SP3_abril_265.sort()
 resultados_SP3_abril_265=glob(os.path.join('data_250403','265_SP3','**', '*resultados*'),recursive=True)
 resultados_SP3_abril_265.sort()
 
-# %%
-%matplotlib
+# %% Comparo SP2 (108/265) Marzo vs Abril
+_,_,_,H_mar_108,M_mar_108,_=lector_ciclos(ciclos_SP2_marzo_108[1]) #elijo uno de los ciclos para comparar Antes y Despues
+_,_,_,H_abr_108,M_abr_108,_=lector_ciclos(ciclos_SP2_abril_108[3])
+
+_,_,_,H_mar_265,M_mar_265,_=lector_ciclos(ciclos_SP2_marzo_265[0])
+_,_,_,H_abr_265,M_abr_265,_=lector_ciclos(ciclos_SP2_abril_265[0])
+
 fig, (ax1,ax2) = plt.subplots(nrows=1,ncols=2,figsize=(10,5), constrained_layout=True,sharey=True)
+ax1.set_title('108 kHz')
+ax1.plot(H_mar_108,M_mar_108,label='Marzo 25')
+ax1.plot(H_abr_108,M_abr_108,label='Abril 25')
 
-
-#elijo uno de los ciclos para que se vea mejor
-for i in ciclos_SP2_marzo_108:
-    _,_,_,H,M,_=lector_ciclos(i)
-    ax1.plot(H,M)
-
-for i in ciclos_SP2_marzo_265:
-    _,_,_,H,M,_=lector_ciclos(i)
-    ax1.plot(H,M,'.-')
+ax2.set_title('265 kHz')
+ax2.plot(H_mar_265,M_mar_265,label='Marzo 25')
+ax2.plot(H_abr_265,M_abr_265,label='Abril 25')
     
 for a in[ax1,ax2]:
     a.grid()
-    #a.legend(ncol=1)
-# plt.suptitle('NF241126 @Citrato - N1 - 108kHz')
+    a.legend(ncol=1)
+    a.set_xlabel('H (A/m)')
+ax1.set_ylabel('M (A/m)')
+plt.suptitle('SP2 - NF en Al$_2$O$_3$')
+plt.savefig('Comparativa_SP2_Marzo_vs_Abril.png', dpi=300)
+plt.show()  
+#%% SP2 (Marzo/Abril) 108 vs 265 kHz
+
+fig, (ax1,ax2) = plt.subplots(nrows=1,ncols=2,figsize=(10,5), constrained_layout=True,sharey=True)
+
+ax1.set_title('SP2 - Marzo')
+ax1.plot(H_mar_108,M_mar_108,label='108 kHz')
+ax1.plot(H_mar_265,M_mar_265,label='265 kHz')
+
+ax2.set_title('SP2 - Abril')
+ax2.plot(H_abr_108,M_abr_108,label='108 kHz')
+ax2.plot(H_abr_265,M_abr_265,label='265 kHz')
+
+for a in[ax1,ax2]:
+    a.grid()
+    a.legend(ncol=1)
+    a.set_xlabel('H (A/m)')
+ax1.set_ylabel('M (A/m)')
+plt.suptitle('SP2 - NF en Al$_2$O$_3$')
+plt.savefig('Comparativa_SP2_108_vs_265.png', dpi=300)
+
+plt.show()
+
+
+
+# %% Comparo SP2 y SP3 ambos de abril por frecuencias
+
+
+_,_,_,H_SP2_108,M_SP2_108,_=lector_ciclos(ciclos_SP2_abril_108[3])
+_,_,_,H_SP2_265,M_SP2_265,_=lector_ciclos(ciclos_SP2_abril_265[0])
+
+_,_,_,H_SP3_108,M_SP3_108,_=lector_ciclos(ciclos_SP3_abril_108[2])
+_,_,_,H_SP3_265,M_SP3_265,_=lector_ciclos(ciclos_SP3_abril_265[1])
+
+
+fig, (ax1,ax2) = plt.subplots(nrows=1,ncols=2,figsize=(10,5), constrained_layout=True,sharey=True)
+
+ax1.set_title('SP2')
+ax1.plot(H_SP2_108,M_SP2_108,label='SP2 108')
+ax1.plot(H_SP2_265,M_SP2_265,label='SP2 265')
+
+ax2.set_title('SP3')
+ax2.plot(H_SP3_108,M_SP3_108,label='SP3 108')
+ax2.plot(H_SP3_265,M_SP3_265,label='SP3 265')
+
+for a in[ax1,ax2]:
+    a.grid()
+    a.legend(ncol=1)
+    a.set_xlabel('H (A/m)')
+ax1.set_ylabel('M (A/m)')
+plt.suptitle('SP2/SP3 - NF/NF@citrato en Al$_2$O$_3$')
 #plt.savefig('Comparativa_NF_Citrato_108kHz', dpi=200, facecolor='w')
 plt.show()  
 
 
-# %%
+#%% new 
+
+
+ciclos_SP2_abril_108_new=glob(os.path.join('data_250407','108_new','**', '*ciclo_promedio*'),recursive=True)
+ciclos_SP2_abril_108_new.sort()
+
+ciclos_SP2_abril_265_new=glob(os.path.join('data_250407','265_new','**', '*ciclo_promedio*'),recursive=True)
+ciclos_SP2_abril_265_new.sort()
+
+fig, (ax1,ax2) = plt.subplots(nrows=1,ncols=2,figsize=(10,5), constrained_layout=True,sharey=True)
+
+ax1.set_title('108')
+for p in ciclos_SP2_abril_108_new:
+    _,_,_,H_108,M_108,_=lector_ciclos(p)
+    ax1.plot(H_108,M_108,label='108')
+    
+    
+#ax1.plot(H_SP2_265,M_SP2_265,label='SP2 265')
+
+ax2.set_title('265')
+for p in ciclos_SP2_abril_265_new:
+    _,_,_,H_265,M_265,_=lector_ciclos(p)
+    ax2.plot(H_265,M_265,label='265')
+
+for a in[ax1,ax2]:
+    a.grid()
+    a.legend(ncol=1)
+    a.set_xlabel('H (A/m)')
+ax1.set_ylabel('M (A/m)')
+plt.suptitle('SP2/SP3 - NF/NF@citrato en Al$_2$O$_3$')
+plt.savefig('Comparativa_SP2_108_265_new.png', dpi=300)
+plt.show()  
+#%%
+fig, ax1 = plt.subplots(nrows=1,ncols=1,figsize=(6,5), constrained_layout=True,sharey=True)
+
+ax1.set_title('108')
+for p in ciclos_SP2_abril_108_new:
+    _,_,_,H_108,M_108,_=lector_ciclos(p)
+    ax1.plot(H_108,M_108,c='tab:blue',label='108')
+    
+    
+#ax1.plot(H_SP2_265,M_SP2_265,label='SP2 265')
+
+ax1.set_title('265')
+for p in ciclos_SP2_abril_265_new:
+    _,_,_,H_265,M_265,_=lector_ciclos(p)
+    ax1.plot(H_265,M_265,c='tab:orange',label='265')
+
+for a in[ax1]:
+    a.grid()
+    a.legend(ncol=2)
+    a.set_xlabel('H (A/m)')
+ax1.set_ylabel('M (A/m)')
+plt.suptitle('SP2/SP3 - NF/NF@citrato en Al$_2$O$_3$')
+plt.savefig('Comparativa_SP2_108_265_new_bis.png', dpi=300)
+plt.show()  
